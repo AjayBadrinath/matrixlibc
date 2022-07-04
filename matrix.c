@@ -1,22 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/time.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <assert.h>
 
-/*
-Matrix definition in the form of structure
-
-*/
-
-typedef struct mat{
-	int row;
-	int col;
-	double *data;
-
-}matrix;
+#include "matrix.h"
 
 //#define mx(matrix) rows matrix->row
 //#define  cols matrix->col
