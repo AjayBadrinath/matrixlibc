@@ -91,14 +91,29 @@ Create Matrix with predefined vals:
 
 Other Functions included in the library:
 
-   Transpose
+   Transpose 
+   
+   
    Cofactor
+   
+   
    Adjoint 
+   
+   
    Determinant
+   
    Sum 
+   
+   
    Scalar Product 
+   
+   
    Dot Product
+   
+   
    Trace 
+   
+   
    Inverse
    
  
