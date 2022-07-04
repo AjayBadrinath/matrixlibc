@@ -52,7 +52,7 @@ matrix* scalar_product(double , matrix* );
 
 matrix* adjoint( matrix *);
 
-matrix* random_matrix(int ,int ,int ,char );
+matrix* random_matrix(int ,int ,int ,char * );
 
 matrix* inverse( matrix* );
 
