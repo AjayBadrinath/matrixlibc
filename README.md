@@ -6,7 +6,7 @@ This library was designed for performing basic matrix operations .Haskell/python
 All of the given functions in the header take and throwout <b>ONLY POINTERS TO MATRIX . NOT THE MATRIX ITSELF</b>.
 Plus the values output /built in for the matrix structure IS ONLY DOUBLE .
 
-# Usage [For those who are lazy to look into the source header]:
+# Usage :
 
 Matrix Creation  :
 
