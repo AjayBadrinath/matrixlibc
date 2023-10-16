@@ -1,6 +1,6 @@
-# Matrix Library for C 
+# Matrix Library for C [Under Development Currently - New Version   Ported to gmp ]
 
-Fast matrix library for C
+Fast matrix library for C 
 
 This library was designed for performing basic matrix operations .Haskell/python like functions [more like python   ] implemented for simple matrix operations   
 All of the given functions in the header take and throwout <b>ONLY POINTERS TO MATRIX . NOT THE MATRIX ITSELF</b>.
@@ -91,30 +91,18 @@ Create Matrix with predefined vals:
 
 Other Functions included in the library:
 
-   Transpose 
-   
-   
-   Cofactor
-   
-   
-   Adjoint 
-   
-   
-   Determinant
-   
-   Sum 
-   
-   
-   Scalar Product 
-   
-   
-   Dot Product
-   
-   
-   Trace 
-   
-   
-   Inverse
+
+
+
+           Transpose    
+           Cofactor
+           Adjoint 
+           Determinant
+           Sum 
+           Scalar Product
+           Dot Product
+           Trace 
+           Inverse
    
  
  
