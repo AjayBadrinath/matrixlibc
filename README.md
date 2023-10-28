@@ -1,5 +1,7 @@
 # Matrix Library for C [Under Development Currently - New Version   Ported to gmp ]
 
+Initial porting to lgmp partially done .. only fraction of work done ... to be ported soon when i find time....
+
 Fast matrix library for C 
 
 This library was designed for performing basic matrix operations .Haskell/python like functions [more like python   ] implemented for simple matrix operations   
