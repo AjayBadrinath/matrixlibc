@@ -28,43 +28,26 @@ int row;
 int col;
  datatype  *data;
 }matrix;
-/*
-matrix* Create_Matrix1(int row,int col,datatype*dt){
-    matrix*m=(matrix*)malloc(sizeof(matrix));
-    m->row=row;
-    m->col=col;
-    m->data=(datatype*)malloc(sizeof(datatype));
-    //m->data->mpz_types=dt->mpz_types;
-    
-    setType(m->data,dt->mpz_types,0);
-    
 
-}
-*/
-
-typedef void(*setter)(datatype*,void*);
+//typedef void* (*getter)(datatype*);
+typedef void(*setter)(datatype*,void*,int);
 typedef void*(*createType)(int);
-void setInt (datatype*dt,void* val){
+void setInt (datatype*dt,void* val,int idx){
     mpz_set(*(dt->mpz_type.i),*(mpz_t*)val);
 
 }
-void setFloat (datatype*dt,void* val){
-    mpf_set(*(dt->mpz_type.f),*(mpf_t*)val);
+void setFloat (datatype*dt,void* val,int idx){
+ printf("FLTSET");
+ mpf_set(*(dt->mpz_type.f),*(mpf_t*)val);
+ 
     
 }
-void setRational (datatype*dt,void* val){
+void setRational (datatype*dt,void* val,int idx){
+    printf("rat creat");
     mpq_set(*(dt->mpz_type.r),*(mpq_t*)val);
     
 }
-void getInt (){
-    return NULL;
-}
-void getFloat(){
-    return NULL;
-}
-void getRational(){
-    return NULL;
-}
+
 void* CreateInt(int size){
     printf("int CREATEfn");
     mpz_t* a=(mpz_t*)malloc(sizeof(mpz_t)*size);
@@ -97,7 +80,7 @@ void* CreateRational(int size){
 }
 setter set[]={setInt,setFloat,setRational};
 createType creator[]={CreateInt,CreateFloat,CreateRational};
-
+//getter get[]={getInt,getFloat,getRational};
 
 matrix*Create_Matrix(int row,int col, datatype* dt){
     if(row>0&&col>0){
@@ -106,7 +89,9 @@ matrix*Create_Matrix(int row,int col, datatype* dt){
         m->col=col;
         m->data=(datatype*)malloc(sizeof(datatype));
         m->data->mpz_types=dt->mpz_types;
-        /**/
+        //void* z=getType(m->data->mpz_type,dt->mpz_types)
+
+        
         switch (dt->mpz_types){
 
             case INT:
@@ -125,6 +110,7 @@ matrix*Create_Matrix(int row,int col, datatype* dt){
             
             
         }
+        
         return m;
 
     
@@ -134,33 +120,24 @@ matrix*Create_Matrix(int row,int col, datatype* dt){
     }
     return NULL;
 }
-void setType(datatype*dt,e_T type,void*val){
-    dt->mpz_types=type;
-    switch(type){
-        case INT:
-            mpz_set(*(dt->mpz_type.i),*(mpz_t*)val);
-        case FLOAT:
-            mpf_set(*(dt->mpz_type.f),*(mpf_t*)val);
-        case RATIONAL:
-            mpq_set(*(dt->mpz_type.r),*(mpq_t*)val);
-        
-        
-    } 
-    
-    
+void setVal(matrix*dt,void*val,int idx){
+    set[dt->data->mpz_types](dt->data,val,idx);
 }
-datatype* getType(datatype*dt,e_T type){
+void* getVal(datatype*dt,int idx){
 
-    assert(dt->mpz_types==type);
-    dt->mpz_types=type;
-    switch(type){
+    //assert(dt->mpz_types==type);
+    //dt->mpz_types=type;
+    switch(dt->mpz_types){
         case INT:
-            return dt->mpz_type.i;
+            printf("INT CREATE");
+            return dt->mpz_type.i[idx];
             break;
         case FLOAT:
-            return dt->mpz_type.f;
+            printf("float CREATE");
+            return dt->mpz_type.f[idx];
         case RATIONAL:
-            return dt->mpz_type.r;
+            printf("rational CREATE");
+            return dt->mpz_type.r[idx];
 
     }
     return NULL;
@@ -169,13 +146,16 @@ datatype* getType(datatype*dt,e_T type){
 }
 
 
-void insert_element(matrix*mat,int i_row,int j_col,int val){
-    mpz_t* m=mat->data;
-    mpz_set_ui(*(m+((j_col)+(i_row)*(mat->col))),val);
+void insert_element(matrix*mat,int i_row,int j_col,void *val){
+    //mpz_t* m=mat->data;
+    //set[mat->data->mpz_types]
+    printf("gyug CREATE");
+    setVal(mat,val,((j_col)+(i_row)*(mat->col)));
+    //setType(getType(mat->data->mpz_types),mat->data->mpz_types,val,((j_col)+(i_row)*(mat->col)));
 }
 int get_element(matrix*mat,int row,int col){
     mpz_t* m=mat->data;
-	    return mpz_get_ui(*(m+((col)+(row)*(mat->col))));
+	return mpz_get_ui(*(m+((col)+(row)*(mat->col))));
 }
 void print_matrix(matrix*mat){
     printf("HELOOL\n%d",mat->data->mpz_types);
@@ -235,6 +215,7 @@ matrix* Create_Eye_Matrix(int row,datatype *dt){
             
         }
     }
+    return NULL;
 }
 matrix* cofactor(matrix*x,int a,int b,datatype *dt){
     matrix* tmp=Create_Matrix(x->row-1,x->col-1,dt);
@@ -250,7 +231,7 @@ matrix* cofactor(matrix*x,int a,int b,datatype *dt){
             }
         }
     }
-    //return tmp;
+    return tmp;
 }
 
 void insert_multival(matrix* x, int *arr){
@@ -261,16 +242,27 @@ void insert_multival(matrix* x, int *arr){
         }
     }
 }
+
 void main(){
     struct timeval start,end;
     gettimeofday(&start,NULL);
     datatype * t= malloc(sizeof(datatype));
     t->mpz_types=RATIONAL;
+    //(t->mpz_type.r)=(mpq_t*)malloc(sizeof(mpq_t));
+    //mpq_set_d(*t->mpz_type.r,12.35);
     //mpz_t* i;
     //mpz_set(*i,1);
-    //printf(";lllool;;%d",mpz_get_ui(i));
-    
+    //printf(";lllool;;%f",mpq_get_d(getType(t)));
+    double *x =malloc(sizeof(double));
+    *x=2.45;
     matrix* k=Create_Matrix(3,5,t);
+    //mpq_t* j=*(mpq_t*)x;
+    mpq_t j;
+    mpq_init(j);
+    mpq_set_d(j, *x);
+    insert_element(k,1,1,j);
+
+    //printf(";lllool;;%f",mpq_get_d(getType(k->data,1)));
     //printf("%ld",mpz_get_ui(k->data->mpz_type.i[0]));
     //mpq_t* l=k->data->mpz_type.r;
     //printf("%f",mpf_get_d(k->data->mpz_type.f[1]));
