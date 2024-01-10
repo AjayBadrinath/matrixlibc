@@ -44,7 +44,7 @@ void setFloat (datatype*dt,void* val,int idx){
 }
 void setRational (datatype*dt,void* val,int idx){
     printf("rat creat");
-    mpq_set(*(dt->mpz_type.r),*(mpq_t*)val);
+    mpq_set(*(dt->mpz_type.r+idx),*(mpq_t*)val);
     
 }
 
@@ -147,11 +147,9 @@ void* getVal(datatype*dt,int idx){
 
 
 void insert_element(matrix*mat,int i_row,int j_col,void *val){
-    //mpz_t* m=mat->data;
-    //set[mat->data->mpz_types]
-    printf("gyug CREATE");
+    
     setVal(mat,val,((j_col)+(i_row)*(mat->col)));
-    //setType(getType(mat->data->mpz_types),mat->data->mpz_types,val,((j_col)+(i_row)*(mat->col)));
+
 }
 int get_element(matrix*mat,int row,int col){
     mpz_t* m=mat->data;
@@ -234,15 +232,56 @@ matrix* cofactor(matrix*x,int a,int b,datatype *dt){
     return tmp;
 }
 
-void insert_multival(matrix* x, int *arr){
+void insert_multival(matrix* x, void *arr){
     int i,j;
+    mpq_t*a1=(mpq_t*)arr;
+    
     for(int i=0;i<x->row;i++){
         for(int j=0;j<x->col;j++){
-            insert_element(x,i,j,*(arr++));
+            //insert_element(x,i,j,(a1+i*x->col+j));
+            setVal(x,(a1++),((j)+(i)*(x->col)));
+            
+
         }
     }
+}/*
+mpq_t rational(double val){
+    double *x =malloc(sizeof(double));
+    *x=val;
+    mpq_t j;
+    mpq_init(j);
+    mpq_set_d(j, val);
+    free(x);
+    return j;
 }
+mpz_t* Integer(int val){
+    int *x =malloc(sizeof(int));
+    *x=val;
+    mpz_t* j;
+    mpz_init(*j);
+    mpz_set_ui(*j, *x);
+    free(x);
+    return j;
+}
+mpf_t* Float(double val){
+    double *x =malloc(sizeof(double));
+    *x=val;
+    mpf_t *j;
+    mpf_init(*j);
+    mpf_set_d(*j, *x);
+    free(x);
+    return j;
+}*/
 
+void* CreateRationalArr(int size,double* val){
+    printf("rational CREATEfn");
+    mpq_t* a=(mpq_t*)malloc(sizeof(mpq_t)*size);
+    for (int i=0;i<size;i++){
+        mpq_init(*(a+i));
+        mpq_set_d(*(a+i),*(val+i));
+    }
+    return a;
+}
 void main(){
     struct timeval start,end;
     gettimeofday(&start,NULL);
@@ -255,42 +294,36 @@ void main(){
     //printf(";lllool;;%f",mpq_get_d(getType(t)));
     double *x =malloc(sizeof(double));
     *x=2.45;
-    matrix* k=Create_Matrix(3,5,t);
+    double arr1[]={
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
+        1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,1.0
+    };
+    mpq_t*z=CreateRationalArr(100,arr1);
+    matrix* k=Create_Matrix(10,10,t);
     //mpq_t* j=*(mpq_t*)x;
     mpq_t j;
     mpq_init(j);
-    mpq_set_d(j, *x);
-    insert_element(k,1,1,j);
-
+    mpq_set_d(j, 2.45);
+    insert_multival(k,z);
+    //insert_element(k,2,1,j);
+    //setRational(k->data,j,8);
+    mpq_clear(j);
+    //insert_multival(k,z);
     //printf(";lllool;;%f",mpq_get_d(getType(k->data,1)));
     //printf("%ld",mpz_get_ui(k->data->mpz_type.i[0]));
     //mpq_t* l=k->data->mpz_type.r;
     //printf("%f",mpf_get_d(k->data->mpz_type.f[1]));
     print_matrix(k);
-    /*
-    int arr1[]={
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
-    };
-    insert_multival(k,arr1);
- 
-
-    k=transpose(k);
-
-
-    int arr[]={1,2,3,4,5,6,7,8,9};
-    matrix*m=Create_Matrix(3,3,"int");
-    insert_multival(m,arr);
-    matrix*cf=cofactor(m,0,1);
-    print_matrix(cf);
-*/
-    /*
-    for(int i=0;i<3;i++){
-        for(int j=0;j<5;j++){
-            insert_element(k,i,j,-i+1*-j+1);
-        }
-    }
-    //print_matrix(transpose(k));
-    */
+    
 gettimeofday(&end,NULL);
 long sec=(end.tv_sec-start.tv_sec);
 long us=(((sec*1000000)+end.tv_usec)-(start.tv_usec));
