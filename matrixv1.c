@@ -151,9 +151,9 @@ void insert_element(matrix*mat,int i_row,int j_col,void *val){
     setVal(mat,val,((j_col)+(i_row)*(mat->col)));
 
 }
-int get_element(matrix*mat,int row,int col){
-    mpz_t* m=mat->data;
-	return mpz_get_ui(*(m+((col)+(row)*(mat->col))));
+mpq_t* get_element(matrix*mat,int row,int col){
+    mpq_t* m=mat->data;
+	return ((m+((col)+(row)*(mat->col))));
 }
 void print_matrix(matrix*mat){
     printf("HELOOL\n%d",mat->data->mpz_types);
@@ -196,11 +196,12 @@ void print_matrix(matrix*mat){
     }
 }
 
-matrix* transpose(matrix*mat,datatype *dt){
-    matrix*T=Create_Matrix(mat->col,mat->row,dt);
+matrix* transpose(matrix*mat){
+    matrix*T=Create_Matrix(mat->col,mat->row,mat->data);
     for(int row=0;row<mat->row;row++){
         for(int col=0;col<mat->col;col++){
-            insert_element(T,col,row,get_element(mat,row,col));
+            printf("%f",mpq_get_d(*get_element(mat,row,col)));
+            //insert_element(T,col,row,(*get_element(mat,row,col)));
         }
     }
     return T;
@@ -215,13 +216,15 @@ matrix* Create_Eye_Matrix(int row,datatype *dt){
     }
     return NULL;
 }
-matrix* cofactor(matrix*x,int a,int b,datatype *dt){
-    matrix* tmp=Create_Matrix(x->row-1,x->col-1,dt);
+
+
+matrix* cofactor(matrix*x,int a,int b){
+    matrix* tmp=Create_Matrix(x->row-1,x->col-1,x->data);
     int i=1,j=1;
     for(int m=1;m<x->row;m++){
         for(int o=1;o<x->col;o++){
             if(m!=a && o!=b){
-                //insert_element(tmp,i,j++,get_element(x,m,o));
+                insert_element(tmp,i,j++,get_element(x,m,o));
                 if(j==(x->row)){
                     j=1;
                     i++;
@@ -230,6 +233,21 @@ matrix* cofactor(matrix*x,int a,int b,datatype *dt){
         }
     }
     return tmp;
+}
+double determinant(matrix* x){
+if (x->row==1){
+	return mpq_get_d(get_element(x,1,1));
+}
+matrix* temp;
+double d=0;
+int sign=1;
+for (int k=1;k<=x->row;k++){
+	temp=cofactor(x,1,k);
+    printf("%d",d);
+	d+=sign*mpq_get_d(get_element(x,1,k))*determinant(temp);
+	sign=-sign;
+}
+return d;
 }
 
 void insert_multival(matrix* x, void *arr){
@@ -272,7 +290,17 @@ mpf_t* Float(double val){
     free(x);
     return j;
 }*/
+void * CreateIntArr(int size,int *val){
+    mpz_t* a=(mpz_t*)malloc(sizeof(mpz_t)*size);
+    for (int i=0;i<size;i++){
+        mpz_init(*(a+i));
+        mpz_set_ui(*(a+i),*(val+i));
 
+    }
+    return a;
+
+
+}
 void* CreateRationalArr(int size,double* val){
     printf("rational CREATEfn");
     mpq_t* a=(mpq_t*)malloc(sizeof(mpq_t)*size);
@@ -294,6 +322,7 @@ void main(){
     //printf(";lllool;;%f",mpq_get_d(getType(t)));
     double *x =malloc(sizeof(double));
     *x=2.45;
+    double arr[]={1,2,3,4,5,6,7,8,9};
     double arr1[]={
         1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
         1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
@@ -307,16 +336,30 @@ void main(){
         1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
         1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,1.0
     };
-    mpq_t*z=CreateRationalArr(100,arr1);
-    matrix* k=Create_Matrix(10,10,t);
+    /*
+    matrix * k=Create_Matrix(3,3,t);
+    mpz_t*z= CreateIntArr(9,arr);
+    printf("%ld",mpz_get_ui(*(z+1)));
+    insert_multival(k,z);
+    print_matrix (k);
+    */
+
+
+
+    
+    mpq_t*z=CreateRationalArr(9,arr);
+    matrix* k=Create_Matrix(3,3,t);
     //mpq_t* j=*(mpq_t*)x;
     mpq_t j;
-    mpq_init(j);
-    mpq_set_d(j, 2.45);
+    //mpq_init(j);
+    //mpq_set_d(j, 2.45);
     insert_multival(k,z);
+    //matrix* cf=cofactor(k,1,1);
+    //print_matrix(cf);
+    (transpose(k));
     //insert_element(k,2,1,j);
     //setRational(k->data,j,8);
-    mpq_clear(j);
+    //mpq_clear(j);
     //insert_multival(k,z);
     //printf(";lllool;;%f",mpq_get_d(getType(k->data,1)));
     //printf("%ld",mpz_get_ui(k->data->mpz_type.i[0]));
